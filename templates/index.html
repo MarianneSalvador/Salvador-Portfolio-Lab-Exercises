@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Home | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="hero section-space" aria-labelledby="hero-title">
+    <div class="hero-copy" data-reveal>
+        <p class="terminal-line"><span aria-hidden="true">&gt;</span> hello, world<span class="cursor" aria-hidden="true">_</span></p>
+        <p class="eyebrow">A little portfolio, a lot of curiosity</p>
+        <h1 id="hero-title">Hi, I'm Marianne.<br><span class="accent-text">I build things</span><br>with code.</h1>
+        <p class="hero-description">Here to learn, grow, and create meaningful solutions (♡´౪`♡)</p>
+        <div class="hero-actions"><a class="button button-primary" href="{{ url_for('works') }}">View my works <span aria-hidden="true">↗</span></a><a class="button button-secondary" href="{{ url_for('contact') }}">Contact me <span aria-hidden="true">↗</span></a></div>
+    </div>
+    <div class="hero-art" aria-hidden="true" data-reveal>
+        <div class="code-window"><div class="window-bar"><span></span><span></span><span></span><p>about.py</p></div>
+            <div class="code-lines">
+                <p><span class="code-muted">01</span> <span class="code-pink">name</span> = <span class="code-yellow">"Marianne"</span></p>
+                <p><span class="code-muted">02</span> <span class="code-pink">learning</span> = [</p>
+                <p><span class="code-muted">03</span> &nbsp; <span class="code-cyan">"Python"</span>,</p>
+                <p><span class="code-muted">04</span> &nbsp; <span class="code-cyan">"data structures"</span>,</p>
+                <p><span class="code-muted">05</span> &nbsp; <span class="code-cyan">"algorithms"</span></p>
+                <p><span class="code-muted">06</span> ]</p>
+                <p class="code-comment"><span class="code-muted">07</span> # BSCPE 2-3 KAYA PA BA??</p>
+            </div>
+        </div>
+        <span class="sticker sticker-star">✳</span><span class="sticker sticker-bracket">{ }</span>
+    </div>
+</section>
+<section class="featured-section section-space" aria-labelledby="featured-title" data-reveal>
+    <div class="section-heading"><div><p class="eyebrow">A few things I tried</p><h2 id="featured-title">Built while <span class="accent-text">learning.</span></h2></div><a class="text-link" href="{{ url_for('works') }}">All projects <span aria-hidden="true">→</span></a></div>
+    <div class="featured-grid">
+        <a class="feature-card" href="{{ url_for('uppercase_work') }}"><span class="feature-icon icon-cyan" aria-hidden="true">Aa</span><span><strong>Text transformer</strong><small>Make your letters LOUD.</small></span><span class="card-arrow" aria-hidden="true">↗</span></a>
+        <a class="feature-card" href="{{ url_for('linked_list') }}"><span class="feature-icon icon-pink" aria-hidden="true">↗</span><span><strong>Linked list</strong><small>See the connections.</small></span><span class="card-arrow" aria-hidden="true">↗</span></a>
+        <a class="feature-card" href="{{ url_for('acircle') }}"><span class="feature-icon icon-yellow" aria-hidden="true">π</span><span><strong>Area calculators</strong><small>A little geometry, neatly done.</small></span><span class="card-arrow" aria-hidden="true">↗</span></a>
+    </div>
+</section>
+{% endblock %}
+

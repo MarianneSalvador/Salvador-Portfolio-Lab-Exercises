@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Triangle Area | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="tool-page section-space" data-reveal>
+    <a class="back-link" href="{{ url_for('works') }}"><span aria-hidden="true">←</span> Back to Works</a>
+    <p class="eyebrow">Tool 04 / Geometry</p><h1>Triangle <span class="accent-text">area.</span></h1>
+    <p class="tool-description">A base, a height, and one very cooperative formula.</p>
+    <form class="tool-card" action="{{ url_for('atriangle') }}" method="post" data-preserve-form>
+        <div class="field-pair"><div><label for="base">Base</label><input type="text" inputmode="decimal" id="base" name="base" value="{{ base }}" placeholder="e.g. 8" required></div><div><label for="height">Height</label><input type="text" inputmode="decimal" id="height" name="height" value="{{ height }}" placeholder="e.g. 5" required></div></div>
+        <p class="field-hint">Area = (base × height) ÷ 2</p><button class="button button-primary" type="submit">Calculate <span aria-hidden="true">↗</span></button>
+        {% if error %}<div class="error-panel" role="alert"><span aria-hidden="true">!</span><p>{{ error }}</p></div>{% endif %}
+        {% if result is not none %}<div class="output-panel" aria-live="polite"><p class="output-label"><span class="output-dot" aria-hidden="true"></span> Result</p><p class="output-value">{{ '%.2f'|format(result) }} <span>square units</span></p></div>{% endif %}
+    </form>
+</section>
+{% endblock %}

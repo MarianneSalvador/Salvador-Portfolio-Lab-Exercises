@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Works | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="page-intro section-space" data-reveal><p class="eyebrow">02 / The project shelf</p><h1>Completed.<br><span class="accent-text">Programming works.</span></h1><p class="intro-description">A growing collection of activities built to make programming concepts a little more tangible.</p></section>
+<section class="work-grid section-space" aria-label="Projects">
+    <article class="work-card" data-reveal><div class="work-card-top"><span class="feature-icon icon-cyan" aria-hidden="true">Aa</span><span class="project-index">01</span></div><h2>Uppercase converter</h2><p>Give a string a little extra volume.</p><div class="work-card-bottom"><span class="tag">string</span><a class="button button-small" href="{{ url_for('uppercase_work') }}">Open <span aria-hidden="true">↗</span></a></div></article>
+    <article class="work-card" data-reveal><div class="work-card-top"><span class="feature-icon icon-pink" aria-hidden="true">↗</span><span class="project-index">02</span></div><h2>Linked list</h2><p>Connect the nodes and watch the structure change.</p><div class="work-card-bottom"><span class="tag">data structure</span><a class="button button-small" href="{{ url_for('linked_list') }}">Open <span aria-hidden="true">↗</span></a></div></article>
+    <article class="work-card" data-reveal><div class="work-card-top"><span class="feature-icon icon-yellow" aria-hidden="true">π</span><span class="project-index">03</span></div><h2>Circle area</h2><p>Find the area from a radius.</p><div class="work-card-bottom"><span class="tag">math</span><a class="button button-small" href="{{ url_for('acircle') }}">Open <span aria-hidden="true">↗</span></a></div></article>
+    <article class="work-card" data-reveal><div class="work-card-top"><span class="feature-icon icon-coral" aria-hidden="true">△</span><span class="project-index">04</span></div><h2>Triangle area</h2><p>Base times height, divided by two.</p><div class="work-card-bottom"><span class="tag">math</span><a class="button button-small" href="{{ url_for('atriangle') }}">Open <span aria-hidden="true">↗</span></a></div></article>
+</section>
+{% endblock %}

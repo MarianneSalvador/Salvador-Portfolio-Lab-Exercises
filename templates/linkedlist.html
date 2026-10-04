@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Linked List | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="tool-page linked-tool section-space" data-reveal>
+    <a class="back-link" href="{{ url_for('works') }}"><span aria-hidden="true">←</span> Back to Works</a>
+    <p class="eyebrow">Tool 02 / Data structures</p>
+    <h1>Linked <span class="accent-text">list.</span></h1>
+    <p class="tool-description">Add or remove nodes at either end, search for a value, or remove a matching value.</p>
+    <form class="tool-card linked-form" action="{{ url_for('linked_list') }}" method="post" data-preserve-form>
+        <label for="value">Node value</label>
+        <div class="linked-controls">
+            <input type="text" id="value" name="value" placeholder="Enter a value for add, search, or remove by value" autocomplete="off">
+            <div class="operation-buttons">
+                <button class="button button-primary" type="submit" name="operation" value="add_head">Add head</button>
+                <button class="button button-secondary" type="submit" name="operation" value="add_tail">Add tail</button>
+                <button class="button button-quiet" type="submit" name="operation" value="remove_head">Remove head</button>
+                <button class="button button-quiet" type="submit" name="operation" value="remove_tail">Remove tail</button>
+                <button class="button button-secondary" type="submit" name="operation" value="search">Search value</button>
+                <button class="button button-quiet" type="submit" name="operation" value="remove_value">Remove value</button>
+            </div>
+        </div>
+        {% if message %}<p class="list-message" role="status">{{ message }}</p>{% endif %}
+        <div class="list-visual-wrap" role="region" aria-label="Linked list visualization" tabindex="0">
+            <p class="list-label">HEAD</p>
+            <div class="list-visual" aria-label="List values: {% for item in items %}{{ item }}{% if not loop.last %}, {% endif %}{% endfor %}, then null">
+                {% for item in items %}<span class="list-node">[{{ item }}]</span><span class="list-arrow" aria-hidden="true">→</span>{% endfor %}<span class="list-null">null</span>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}

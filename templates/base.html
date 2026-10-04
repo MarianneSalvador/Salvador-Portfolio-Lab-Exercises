@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0b1020">
+    <title>{% block title %}Marianne Salvador | Portfolio{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/site.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+        <div class="nav-shell">
+            <a class="brand" href="{{ url_for('index') }}" aria-label="Marianne Salvador, home">&lt;marianne<span>/</span>&gt;</a>
+            <button class="menu-toggle" type="button" aria-label="Open navigation" aria-expanded="false" aria-controls="primary-navigation"><span></span><span></span><span></span></button>
+            <nav class="primary-nav" id="primary-navigation" aria-label="Main navigation">
+                <a href="{{ url_for('index') }}" {% if request.path == '/' %}aria-current="page"{% endif %}>Home</a>
+                <a href="{{ url_for('profile') }}" {% if request.path == '/profile' %}aria-current="page"{% endif %}>Profile</a>
+                <a href="{{ url_for('works') }}" {% if request.path.startswith('/works') %}aria-current="page"{% endif %}>Works</a>
+                <a href="{{ url_for('experiences') }}" {% if request.path == '/experiences' %}aria-current="page"{% endif %}>Experiences</a>
+                <a href="{{ url_for('contact') }}" {% if request.path == '/contact' %}aria-current="page"{% endif %}>Contact</a>
+                <button class="theme-toggle" type="button" aria-label="Switch color theme" title="Switch color theme"><span class="theme-icon" aria-hidden="true">☼</span><span class="theme-label">Theme</span></button>
+            </nav>
+        </div>
+    </header>
+    <main id="main-content" class="page-shell">
+        {% block content %}{% endblock %}
+        {% include "page_navigation.html" %}
+    </main>
+    <footer class="site-footer"><div class="footer-inner">
+        <a class="brand footer-brand" href="{{ url_for('index') }}">&lt;marianne<span>/</span>&gt;</a>
+        <p>Turning ideas <span aria-hidden="true">╰ (´꒳`) ╯</span> into reality.</p>
+        <a class="footer-top" href="#main-content">Back to top ↑</a>
+    </div></footer>
+</body>
+</html>

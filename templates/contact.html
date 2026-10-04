@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Contact | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="contact-page section-space" data-reveal>
+    <div class="contact-intro"><p class="eyebrow">03 / Communication Hub</p><h1><span class="comment-text">//</span> say hi<span class="accent-text">.</span></h1>
+        <p>Have a question, an idea, or just want to connect? Contact me below. ʕ•́ᴥ•̀ʔ</p>
+    </div>
+    <div class="contact-layout">
+        <div class="contact-details">
+            <div class="contact-links">
+            <a href="mailto:marianneesalvador@gmail.com"><span class="contact-symbol" aria-hidden="true">@</span><span><small>Email</small><strong>marianneesalvador@gmail.com</strong></span><span aria-hidden="true">↗</span></a>
+            <a href="tel:+639633697118"><span class="contact-symbol" aria-hidden="true">☎</span><span><small>Phone</small><strong>+63 963 369 7118</strong></span><span aria-hidden="true">↗</span></a>
+            <a href="https://github.com/MarianneSalvador" target="_blank" rel="noreferrer"><span class="contact-symbol" aria-hidden="true">⌘</span><span><small>GitHub</small><strong>github.com/MarianneSalvador</strong></span><span aria-hidden="true">↗</span></a>
+            <a href="https://www.linkedin.com/in/marianne-salvador-908010387/" target="_blank" rel="noreferrer"><span class="contact-symbol" aria-hidden="true">in</span><span><small>LinkedIn</small><strong>linkedin.com/in/marianne-salvador-908010387</strong></span><span aria-hidden="true">↗</span></a>
+            <a href="https://www.facebook.com/marianne.cosmos8267" target="_blank" rel="noreferrer"><span class="contact-symbol" aria-hidden="true">f</span><span><small>Facebook</small><strong>facebook.com/marianne.cosmos8267</strong></span><span aria-hidden="true">↗</span></a>
+            <p class="contact-location"><span class="contact-symbol" aria-hidden="true">⌖</span><span><small>Based in</small><strong>San Mateo, Philippines</strong></span></p>
+            </div>
+            <p class="contact-note">I'd love to hear from you!</p>
+        </div>
+        <form class="contact-form" id="contact-form" action="mailto:marianneesalvador@gmail.com" method="post" enctype="text/plain" data-mailto="marianneesalvador@gmail.com">
+            <div class="form-heading"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span>new_message.txt</span></div>
+            <label for="contact-name">Your name</label><input id="contact-name" name="name" type="text" autocomplete="name" required>
+            <label for="contact-email">Your email</label><input id="contact-email" name="email" type="email" autocomplete="email" required>
+            <label for="contact-message">Message</label><textarea id="contact-message" name="message" rows="5" required></textarea>
+            <button class="button button-primary submit-button" type="submit">Open email app <span aria-hidden="true">↗</span></button>
+            <p class="form-hint" id="contact-status" aria-live="polite">Your email app will open with the message ready to send.</p>
+        </form>
+    </div>
+</section>
+{% endblock %}

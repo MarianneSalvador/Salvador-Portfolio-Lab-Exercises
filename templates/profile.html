@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Profile | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="page-intro section-space" data-reveal><p class="eyebrow">01 / A bit about me</p><h1>Curious by nature.<br><span class="accent-text">Developer in progress.</span></h1></section>
+<section class="profile-layout section-space" aria-label="Profile">
+    <div class="profile-portrait" data-reveal><div class="portrait-window">
+        <div class="window-bar"><span></span><span></span><span></span><p>marianne.jpg</p></div>
+        <img class="profile-photo" src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Portrait of Marianne Salvador">
+    </div><span class="portrait-backdrop" aria-hidden="true"></span></div>
+    <div class="profile-copy" data-reveal>
+        <p class="terminal-line"><span aria-hidden="true">&gt;</span> who am i?</p><h2>Hey, I'm Marianne Salvador <span aria-hidden="true">(˃ᆺ˂✿)</span></h2>
+        <p>Hi! I’m Marianne E. Salvador, a second-year Bachelor of Science in Computer Engineering student at the Polytechnic University of the Philippines.</p>
+        <p>I’m passionate about technology, problem-solving, and discovering how things work especially when I get to build, experiment, and learn something new along the way. Outside academics, I enjoy reading, browsing the internet, and exploring new topics that spark my curiosity.</p>
+        <p>I’m always looking for opportunities to expand my skills, take on new challenges, and turn ideas into something meaningful. I may still be learning, but I’m excited to see where curiosity, creativity, and a little bit of code can take me.</p>
+        <div class="tag-list" aria-label="Skills and interests"><span>Python</span><span>Flask</span><span>HTML</span><span>Jinja</span><span>Data structures</span><span>Problem solving</span></div>
+    </div>
+</section>
+<section class="timeline-section section-space" data-reveal><div class="section-heading"><div><p class="eyebrow">Current chapter</p><h2>Learning <span class="accent-text">fundamentals</span></h2></div></div>
+    <ol class="timeline">
+        <li><span class="timeline-dot" aria-hidden="true"></span><p class="timeline-label">Now</p><h3>Building with Python + Flask</h3><p>Practicing the fundamentals by creating interactive tools and sharing the process.</p></li>
+        <li><span class="timeline-dot" aria-hidden="true"></span><p class="timeline-label">Next</p><h3>More things to make</h3><p>Growing this project collection as I learn new concepts, techniques, and ways to solve problems.</p></li>
+    </ol>
+</section>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Uppercase Converter | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="tool-page section-space" data-reveal>
+    <a class="back-link" href="{{ url_for('works') }}"><span aria-hidden="true">←</span> Back to Works</a>
+    <p class="eyebrow">Tool 01 / Strings</p><h1>Uppercase <span class="accent-text">converter.</span></h1>
+    <p class="tool-description">A tiny text transformer. Type something in and give it the all-caps treatment.</p>
+    <form class="tool-card" action="{{ url_for('uppercase_work') }}" method="post" data-preserve-form>
+        <label for="inputString">Your text</label><div class="input-row"><input type="text" id="inputString" name="inputString" placeholder="hello, world" autocomplete="off"><button class="button button-primary" type="submit">Convert <span aria-hidden="true">↗</span></button></div>
+        <p class="field-hint">Letters in, BIG LETTERS out.</p>
+        {% if result is not none %}<div class="output-panel" aria-live="polite"><p class="output-label"><span class="output-dot" aria-hidden="true"></span> Output</p><p class="output-value">{{ result }}</p></div>{% endif %}
+    </form>
+</section>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% if request.endpoint == 'index' %}
+<nav class="page-navigation page-navigation--first" aria-label="Page navigation">
+    <a class="button button-primary page-navigation-link" href="{{ url_for('profile') }}" aria-label="Go to next page: Profile">
+        <span>Profile</span><span class="page-navigation-arrow" aria-hidden="true">&gt;</span>
+    </a>
+</nav>
+{% elif request.endpoint == 'profile' %}
+<nav class="page-navigation" aria-label="Page navigation">
+    <a class="button button-secondary page-navigation-link" href="{{ url_for('index') }}" aria-label="Go to previous page: Home">
+        <span class="page-navigation-arrow" aria-hidden="true">&lt;</span><span>Home</span>
+    </a>
+    <a class="button button-primary page-navigation-link" href="{{ url_for('works') }}" aria-label="Go to next page: Works">
+        <span>Works</span><span class="page-navigation-arrow" aria-hidden="true">&gt;</span>
+    </a>
+</nav>
+{% elif request.path.startswith('/works') %}
+<nav class="page-navigation" aria-label="Page navigation">
+    <a class="button button-secondary page-navigation-link" href="{{ url_for('profile') }}" aria-label="Go to previous page: Profile">
+        <span class="page-navigation-arrow" aria-hidden="true">&lt;</span><span>Profile</span>
+    </a>
+    <a class="button button-primary page-navigation-link" href="{{ url_for('experiences') }}" aria-label="Go to next page: Experiences">
+        <span>Experiences</span><span class="page-navigation-arrow" aria-hidden="true">&gt;</span>
+    </a>
+</nav>
+{% elif request.endpoint == 'experiences' %}
+<nav class="page-navigation" aria-label="Page navigation">
+    <a class="button button-secondary page-navigation-link" href="{{ url_for('works') }}" aria-label="Go to previous page: Works">
+        <span class="page-navigation-arrow" aria-hidden="true">&lt;</span><span>Works</span>
+    </a>
+    <a class="button button-primary page-navigation-link" href="{{ url_for('contact') }}" aria-label="Go to next page: Contact">
+        <span>Contact</span><span class="page-navigation-arrow" aria-hidden="true">&gt;</span>
+    </a>
+</nav>
+{% elif request.endpoint == 'contact' %}
+<nav class="page-navigation page-navigation--last" aria-label="Page navigation">
+    <a class="button button-secondary page-navigation-link" href="{{ url_for('experiences') }}" aria-label="Go to previous page: Experiences">
+        <span class="page-navigation-arrow" aria-hidden="true">&lt;</span><span>Experiences</span>
+    </a>
+</nav>
+{% endif %}

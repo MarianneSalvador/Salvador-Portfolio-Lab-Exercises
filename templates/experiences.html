@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Experiences | Marianne Salvador{% endblock %}
+{% block content %}
+<section class="page-intro section-space" data-reveal>
+    <p class="eyebrow">04 / Experiences</p>
+    <h1>Experiences<span class="accent-text">.</span></h1>
+    <p class="intro-description">Places I've learned, built, and contributed.</p>
+</section>
+<section class="experience-grid section-space" aria-label="Experiences">
+    {% for experience in experiences %}
+    <article class="experience-card work-card" data-reveal>
+        <h2>{{ experience.title }}</h2>
+        <div class="experience-meta">
+            {% if experience.organization %}<span class="experience-tag">{{ experience.organization }}</span>{% endif %}
+            <span class="experience-tag">{{ experience.role }}</span>
+        </div>
+        <p class="experience-date">{{ experience.date }}</p>
+        <img
+            class="experience-image"
+            src="{{ url_for('static', filename=experience.image) }}"
+            alt="{{ experience.title }}"
+            loading="lazy"
+        >
+        <ul class="experience-bullets">
+            {% for bullet in experience.bullets %}
+            <li>{{ bullet }}</li>
+            {% endfor %}
+        </ul>
+    </article>
+    {% endfor %}
+</section>
+{% endblock %}
