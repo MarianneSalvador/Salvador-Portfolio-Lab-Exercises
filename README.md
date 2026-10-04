@@ -53,8 +53,3 @@ real secret or `.env` file.
 The built-in Flask server runs with debug mode enabled in `app.py` for local
 development only. Do not expose that development server to the public internet.
 
-## Before publishing
-
-The site and repository contain personal contact details and photographs.
-Review the rendered site and each image, and confirm you are comfortable making
-them public and have permission to share photos that include other people.
