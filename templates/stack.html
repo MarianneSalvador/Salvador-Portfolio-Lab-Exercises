@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Stack Visualization | Marianne Salvador{% endblock %}
+{% block page_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stack.css') }}">
+{% endblock %}
+{% block content %}
+<section class="tool-page stack-page section-space" aria-labelledby="stack-title">
+    {% if request.args.get('from') == 'tools' %}
+    <a class="back-link" href="{{ url_for('stack_tools') }}"><span aria-hidden="true">←</span> Back to Stack</a>
+    {% else %}
+    <a class="back-link" href="{{ url_for('works') }}"><span aria-hidden="true">←</span> Back to Works</a>
+    {% endif %}
+    <p class="eyebrow">03 / Data structures</p>
+    <h1 id="stack-title">Stack <span class="accent-text">(LIFO).</span></h1>
+    <p class="tool-description">Stack Last In, First Out visualization</p>
+
+    <section class="stack-card" aria-label="Stack controls and visualization">
+        <div class="stack-controls">
+            <label for="stack-input">Enter data</label>
+            <div class="stack-input-row">
+                <input id="stack-input" name="value" type="text" placeholder="Enter data" autocomplete="off" aria-describedby="stack-status">
+                <div class="stack-buttons">
+                    <button class="button button-primary" type="button" data-action="push">Push</button>
+                    <button class="button button-secondary" type="button" data-action="pop">Pop</button>
+                    <button class="button button-secondary" type="button" data-action="peek">Peek</button>
+                    <button class="button button-quiet" type="button" data-action="reset">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="stack-diagram-wrap">
+            <div class="stack-frame" role="region" aria-label="Singly linked list stack, top to bottom" tabindex="0">
+                <div class="stack-bin" id="stack-bin">
+                    <div class="top-pointer" id="top-pointer" aria-hidden="true">
+                        <span class="top-pointer-label">TOP</span>
+                        <span class="top-pointer-arrow">↙</span>
+                    </div>
+                    <div class="stack-nodes" id="stack-nodes"></div>
+                    <p class="stack-empty" id="stack-empty">top = None</p>
+                </div>
+            </div>
+        </div>
+
+        <section class="stack-details" aria-label="Operation details">
+            <p class="stack-status" id="stack-status" role="status" aria-live="polite">Loading stack...</p>
+            <div class="stack-metrics">
+                <p><span>size</span><strong id="stack-size">0</strong></p>
+                <p><span>top</span><strong id="stack-top">None</strong></p>
+            </div>
+            <section class="stack-history" aria-labelledby="stack-history-title">
+                <h2 id="stack-history-title">Recent operations</h2>
+                <ol id="stack-history" aria-live="polite">
+                    <li class="stack-history-empty">Operations and returned values will appear here.</li>
+                </ol>
+            </section>
+            <div class="stack-explanation">
+                <h2>What happens</h2>
+                <ol id="operation-steps"></ol>
+            </div>
+            <div class="stack-code-panel">
+                <div class="stack-code-heading"><span>Python</span><span id="method-name">push</span></div>
+                <pre aria-label="Python method"><code id="method-code"></code></pre>
+            </div>
+        </section>
+    </section>
+</section>
+{% endblock %}
+{% block page_scripts %}
+    <script src="{{ url_for('static', filename='js/stack.js') }}" defer></script>
+{% endblock %}

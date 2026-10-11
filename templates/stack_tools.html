@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block title %}Stack Tools | Marianne Salvador{% endblock %}
+{% block page_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stack-tools.css') }}">
+{% endblock %}
+{% block content %}
+<section class="tool-page section-space stack-tools-page" aria-labelledby="stack-tools-title">
+    <a class="back-link" href="{{ url_for('works') }}"><span aria-hidden="true">←</span> Back to Works</a>
+    <p class="eyebrow">05 / Data structures</p>
+    <h1 id="stack-tools-title">Stack <span class="accent-text">(LIFO)</span></h1>
+    <p class="tool-description">Choose an operation to explore how a stack works.</p>
+
+    <section id="stack-tool-chooser" aria-label="Choose a stack tool">
+        <div class="work-grid stack-tool-choices">
+            <article class="work-card">
+                <div class="work-card-top"><span class="feature-icon icon-cyan" aria-hidden="true">↓</span><span class="project-index">01</span></div>
+                <h2>Stack Visualizer</h2>
+                <p>Push, pop, and peek.</p>
+                <div class="work-card-bottom"><span class="tag">visualizer</span><a class="button button-small" href="{{ url_for('stack_visualization', **{'from': 'tools'}) }}">Open <span aria-hidden="true">↗</span></a></div>
+            </article>
+            <article class="work-card">
+                <div class="work-card-top"><span class="feature-icon icon-pink" aria-hidden="true">→</span><span class="project-index">02</span></div>
+                <h2>Infix to Postfix</h2>
+                <p>Convert expressions with the Shunting Yard algorithm.</p>
+                <div class="work-card-bottom"><span class="tag">expression</span><a class="button button-small" href="#tool-infix" data-open-tool="infix">Open <span aria-hidden="true">↗</span></a></div>
+            </article>
+            <article class="work-card">
+                <div class="work-card-top"><span class="feature-icon icon-yellow" aria-hidden="true">01</span><span class="project-index">03</span></div>
+                <h2>Decimal to Other Number System</h2>
+                <p>Build binary, octal, and hexadecimal values with remainders.</p>
+                <div class="work-card-bottom"><span class="tag">number systems</span><a class="button button-small" href="#tool-convert" data-open-tool="convert">Open <span aria-hidden="true">↗</span></a></div>
+            </article>
+            <article class="work-card">
+                <div class="work-card-top"><span class="feature-icon icon-coral" aria-hidden="true">↔</span><span class="project-index">04</span></div>
+                <h2>Reverse a String</h2>
+                <p>Use last-in, first-out order to reverse characters.</p>
+                <div class="work-card-bottom"><span class="tag">strings</span><a class="button button-small" href="#tool-reverse" data-open-tool="reverse">Open <span aria-hidden="true">↗</span></a></div>
+            </article>
+        </div>
+    </section>
+
+    <section class="stack-tool-panel" id="tool-infix" data-tool-panel="infix" hidden aria-labelledby="infix-title">
+        <button class="button button-secondary stack-tool-back" type="button" data-back-to-chooser>← Back to tools</button>
+        <p class="eyebrow">Stack algorithm 01</p>
+        <h2 id="infix-title">Infix to Postfix Converter</h2>
+        <p class="tool-description">Convert one-letter or one-digit operands using operator precedence.</p>
+        <form class="tool-card" data-tool-form="infix">
+            <label for="infix-expression">Infix expression</label>
+            <div class="input-row">
+                <input id="infix-expression" type="text" placeholder="A * (B + C) / D" autocomplete="off">
+                <button class="button button-primary" type="submit">Convert</button>
+            </div>
+            <p class="field-hint">Use operands, + - * / ^, and parentheses.</p>
+            <div class="stack-tool-error error-panel" data-error="infix" role="alert" hidden><span>!</span><p></p></div>
+        </form>
+        <div class="example-row">
+            <span class="field-hint">Try an example:</span>
+            <button class="button button-quiet button-small" type="button" data-example="infix" data-expression="(A+B+C)*D">(A+B+C)*D</button>
+            <button class="button button-quiet button-small" type="button" data-example="infix" data-expression="A * (B + C) / D">A * (B + C) / D</button>
+            <button class="button button-quiet button-small" type="button" data-example="infix" data-expression="(A * (B + C^D))">(A * (B + C^D))</button>
+        </div>
+        <div class="playback-controls" data-controls="infix" hidden>
+            <button class="button button-secondary" type="button" data-next="infix" disabled>Next Step</button>
+            <button class="button button-secondary" type="button" data-auto="infix" disabled>Auto Play</button>
+            <button class="button button-secondary" type="button" data-show-result="infix" disabled>Show Result</button>
+            <button class="button button-quiet" type="button" data-reset="infix">Reset</button>
+        </div>
+        <div class="algorithm-visual" data-visual="infix" hidden>
+            <div class="token-list-panel"><h3>Values</h3><div class="token-list" id="infix-tokens"></div></div>
+            <div class="algorithm-bin-column"><h3>Operators</h3><div class="algorithm-bin" id="infix-ops"></div></div>
+            <div class="algorithm-output"><h3>Output</h3><p class="output-value" id="infix-output"></p></div>
+        </div>
+        <p class="algorithm-explanation" id="infix-explanation" aria-live="polite">Enter an expression and press Convert.</p>
+        <div class="output-panel" data-result="infix" hidden><p class="output-label"><span class="output-dot" aria-hidden="true"></span> Postfix result</p><p class="output-value"></p></div>
+    </section>
+
+    <section class="stack-tool-panel" id="tool-convert" data-tool-panel="convert" hidden aria-labelledby="convert-title">
+        <button class="button button-secondary stack-tool-back" type="button" data-back-to-chooser>← Back to tools</button>
+        <p class="eyebrow">Stack algorithm 02</p>
+        <h2 id="convert-title">Decimal to Other Number System</h2>
+        <p class="tool-description">Push each division remainder, then pop them to build the converted value.</p>
+        <form class="tool-card" data-tool-form="convert">
+            <div class="field-pair">
+                <label for="decimal-number">Decimal number<input id="decimal-number" type="text" inputmode="numeric" placeholder="26" autocomplete="off"></label>
+                <label for="number-base">Base
+                    <select id="number-base" class="stack-tool-select">
+                        <option value="2">2 — Binary</option>
+                        <option value="8">8 — Octal</option>
+                        <option value="16">16 — Hexadecimal</option>
+                    </select>
+                </label>
+            </div>
+            <button class="button button-primary" type="submit">Convert</button>
+            <div class="stack-tool-error error-panel" data-error="convert" role="alert" hidden><span>!</span><p></p></div>
+        </form>
+        <div class="playback-controls" data-controls="convert" hidden>
+            <button class="button button-secondary" type="button" data-next="convert">Next Step</button>
+            <button class="button button-secondary" type="button" data-auto="convert">Auto Play</button>
+            <button class="button button-secondary" type="button" data-show-result="convert" disabled>Show Result</button>
+            <button class="button button-quiet" type="button" data-reset="convert">Reset</button>
+        </div>
+        <div class="algorithm-visual conversion-visual" data-visual="convert" hidden>
+            <div class="division-panel"><h3>Division steps</h3><ol id="division-steps"></ol></div>
+            <div class="algorithm-bin-column"><h3>Remainders</h3><div class="algorithm-bin" id="remainder-stack"></div></div>
+            <div class="algorithm-output"><h3>result so far</h3><p class="output-value" id="conversion-output"></p></div>
+        </div>
+        <p class="algorithm-explanation" id="convert-explanation" aria-live="polite">Enter a non-negative decimal integer and choose a base.</p>
+        <div class="output-panel" data-result="convert" hidden><p class="output-label"><span class="output-dot" aria-hidden="true"></span> Converted result</p><p class="output-value"></p></div>
+    </section>
+
+    <section class="stack-tool-panel" id="tool-reverse" data-tool-panel="reverse" hidden aria-labelledby="reverse-title">
+        <button class="button button-secondary stack-tool-back" type="button" data-back-to-chooser>← Back to tools</button>
+        <p class="eyebrow">Stack algorithm 03</p>
+        <h2 id="reverse-title">Reverse a String</h2>
+        <p class="tool-description">Push each character, then pop them in reverse order.</p>
+        <form class="tool-card" data-tool-form="reverse">
+            <label for="reverse-text">Text (up to 12 characters)</label>
+            <div class="input-row">
+                <input id="reverse-text" type="text" maxlength="12" placeholder="MARIANNE" autocomplete="off">
+                <button class="button button-primary" type="submit">Reverse</button>
+            </div>
+            <div class="stack-tool-error error-panel" data-error="reverse" role="alert" hidden><span>!</span><p></p></div>
+        </form>
+        <div class="playback-controls" data-controls="reverse" hidden>
+            <button class="button button-secondary" type="button" data-next="reverse">Next Step</button>
+            <button class="button button-secondary" type="button" data-auto="reverse">Auto Play</button>
+            <button class="button button-secondary" type="button" data-show-result="reverse" disabled>Show Result</button>
+            <button class="button button-quiet" type="button" data-reset="reverse">Reset</button>
+        </div>
+        <div class="algorithm-visual reverse-visual" data-visual="reverse" hidden>
+            <div class="token-list-panel"><h3>Input characters</h3><div class="token-list" id="reverse-characters"></div></div>
+            <div class="algorithm-bin-column"><h3>Stack</h3><div class="algorithm-bin" id="reverse-stack"></div></div>
+            <div class="algorithm-output"><h3>output</h3><p class="output-value" id="reverse-output"></p></div>
+        </div>
+        <p class="algorithm-explanation" id="reverse-explanation" aria-live="polite">Enter up to 12 characters to begin.</p>
+        <p class="field-hint">Time complexity: O(n)</p>
+        <div class="output-panel" data-result="reverse" hidden><p class="output-label"><span class="output-dot" aria-hidden="true"></span> Reversed string</p><p class="output-value"></p></div>
+    </section>
+</section>
+{% endblock %}
+{% block page_scripts %}
+    <script src="{{ url_for('static', filename='js/stack-tools.js') }}" defer></script>
+{% endblock %}

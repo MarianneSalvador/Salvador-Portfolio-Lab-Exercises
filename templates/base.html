@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/site.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block page_styles %}{% endblock %}
 </head>
 <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
@@ -36,5 +37,6 @@
         <p>Turning ideas <span aria-hidden="true">╰ (´꒳`) ╯</span> into reality.</p>
         <a class="footer-top" href="#main-content">Back to top ↑</a>
     </div></footer>
+    {% block page_scripts %}{% endblock %}
 </body>
 </html>

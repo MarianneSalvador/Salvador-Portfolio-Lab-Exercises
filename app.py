@@ -2,7 +2,8 @@ import math
 import os
 import secrets
 
-from flask import Flask, render_template, request, session
+from flask import Flask, jsonify, render_template, request, session
+from stack import Stack
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("FLASK_SECRET_KEY") or secrets.token_hex(32)
@@ -172,6 +173,286 @@ def contact():
 @app.route('/works')
 def works():
     return render_template('works.html')
+
+
+@app.route('/works/stack')
+def stack_visualization():
+    return render_template('stack.html')
+
+
+@app.route('/works/stack-tools')
+def stack_tools():
+    return render_template('stack_tools.html')
+
+
+def _session_stack():
+    result = Stack()
+    for value in reversed(session.get('stack_items', [])):
+        result.push(value)
+    return result
+
+
+def _save_session_stack(current_stack):
+    session['stack_items'] = current_stack.to_list()
+
+
+@app.route('/api/state')
+def stack_state():
+    return jsonify(stack=_session_stack().to_list())
+
+
+@app.route('/api/push', methods=['POST'])
+def stack_push():
+    current_stack = _session_stack()
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or not isinstance(payload.get('value'), str):
+        return jsonify(error='Please provide a string value.', stack=current_stack.to_list()), 400
+
+    value = payload['value']
+    if not value.strip():
+        return jsonify(error='Please enter a value before pushing.', stack=current_stack.to_list()), 400
+
+    current_stack.push(value)
+    _save_session_stack(current_stack)
+    return jsonify(stack=current_stack.to_list())
+
+
+@app.route('/api/pop', methods=['POST'])
+def stack_pop():
+    current_stack = _session_stack()
+    popped = current_stack.pop()
+    _save_session_stack(current_stack)
+    return jsonify(popped=popped, stack=current_stack.to_list())
+
+
+@app.route('/api/peek')
+def stack_peek():
+    return jsonify(peek=_session_stack().peek())
+
+
+@app.route('/api/reset', methods=['POST'])
+def stack_reset():
+    session['stack_items'] = []
+    return jsonify(stack=[])
+
+
+def _infix_postfix_steps(expression):
+    tokens = [character for character in expression if not character.isspace()]
+    if not tokens:
+        raise ValueError('Please enter an infix expression.')
+
+    precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+    depth = 0
+    expects_operand = True
+    for token in tokens:
+        if token.isascii() and token.isalnum() and len(token) == 1:
+            if not expects_operand:
+                raise ValueError('Please separate operands with an operator.')
+            expects_operand = False
+        elif token == '(':
+            if not expects_operand:
+                raise ValueError('Please add an operator before the opening parenthesis.')
+            depth += 1
+        elif token == ')':
+            if depth == 0:
+                raise ValueError('The parentheses are unbalanced.')
+            if expects_operand:
+                raise ValueError('Please add an operand before the closing parenthesis.')
+            depth -= 1
+            expects_operand = False
+        elif token in precedence:
+            if expects_operand:
+                raise ValueError('Please add an operand before each operator.')
+            expects_operand = True
+        else:
+            raise ValueError(f'Unsupported character: {token}')
+
+    if depth:
+        raise ValueError('The parentheses are unbalanced.')
+    if expects_operand:
+        raise ValueError('Please finish the expression with an operand.')
+
+    ops = Stack()
+    output = []
+    steps = []
+
+    def record(token, action, token_index=None):
+        steps.append({
+            'token': token,
+            'token_index': token_index,
+            'action': action,
+            'ops': ops.to_list(),
+            'output': ' '.join(output),
+        })
+
+    for token_index, token in enumerate(tokens):
+        if token.isascii() and token.isalnum() and len(token) == 1:
+            output.append(token)
+            record(token, f"'{token}' is an operand; append it to output.", token_index)
+        elif token == '(':
+            ops.push(token)
+            record(token, "'(' is pushed to the ops stack.", token_index)
+        elif token == ')':
+            while ops.peek() != '(':
+                popped = ops.pop()
+                output.append(popped)
+                record(token, f"')' found: pop {popped} to output.", token_index)
+            ops.pop()
+            record(token, "')' found: discard '(' from the ops stack.", token_index)
+        else:
+            while ops.peek() in precedence and (
+                precedence[ops.peek()] > precedence[token]
+                or (
+                    precedence[ops.peek()] == precedence[token]
+                    and token != '^'
+                )
+            ):
+                popped = ops.pop()
+                output.append(popped)
+                record(token, f"Pop {popped} to output before pushing '{token}'.", token_index)
+            ops.push(token)
+            record(token, f"'{token}' is pushed to the ops stack.", token_index)
+
+    while ops.peek() is not None:
+        popped = ops.pop()
+        output.append(popped)
+        record('END', f"Pop {popped} from ops to output.")
+
+    return steps, ' '.join(output)
+
+
+@app.route('/api/infix-postfix', methods=['POST'])
+def infix_postfix():
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or not isinstance(payload.get('expression'), str):
+        return jsonify(error='Please provide an infix expression.'), 400
+    try:
+        steps, result = _infix_postfix_steps(payload['expression'])
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
+    return jsonify(steps=steps, result=result)
+
+
+@app.route('/api/convert', methods=['POST'])
+def decimal_convert():
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error='Please provide a decimal number and base.'), 400
+
+    raw_number = payload.get('number')
+    if isinstance(raw_number, bool) or not (
+        isinstance(raw_number, int)
+        or (isinstance(raw_number, str) and raw_number.isdigit())
+    ):
+        return jsonify(error='Enter a non-negative whole number.'), 400
+    try:
+        number = int(raw_number)
+    except ValueError:
+        return jsonify(error='Enter a valid non-negative whole number.'), 400
+    if number < 0:
+        return jsonify(error='Enter a non-negative whole number.'), 400
+
+    raw_base = payload.get('base')
+    if isinstance(raw_base, bool) or str(raw_base) not in {'2', '8', '16'}:
+        return jsonify(error='Choose base 2, 8, or 16.'), 400
+    base = int(raw_base)
+    digits = '0123456789ABCDEF'
+    remainder_stack = Stack()
+    steps = []
+
+    def push_remainder(remainder, dividend, quotient):
+        remainder_stack.push(digits[remainder])
+        steps.append({
+            'phase': 'push',
+            'division': f'{dividend} / {base} = {quotient}  remainder {remainder}',
+            'remainder': digits[remainder],
+            'stack': remainder_stack.to_list(),
+            'output': '',
+            'explanation': f'Push remainder {digits[remainder]}.',
+        })
+
+    remaining = number
+    if remaining == 0:
+        push_remainder(0, 0, 0)
+    else:
+        while remaining:
+            quotient, remainder = divmod(remaining, base)
+            push_remainder(remainder, remaining, quotient)
+            remaining = quotient
+
+    result_digits = []
+    pop_sequence = []
+    while remainder_stack.peek() is not None:
+        digit = remainder_stack.pop()
+        result_digits.append(digit)
+        result_so_far = ''.join(result_digits)
+        pop_step = {
+            'phase': 'pop',
+            'division': '',
+            'popped': digit,
+            'stack': remainder_stack.to_list(),
+            'output': result_so_far,
+            'explanation': f'Pop {digit} → result so far: {result_so_far}.',
+        }
+        steps.append(pop_step)
+        pop_sequence.append(pop_step)
+
+    return jsonify(
+        steps=steps,
+        pop_sequence=pop_sequence,
+        result=''.join(result_digits),
+        base=base,
+    )
+
+
+@app.route('/api/reverse', methods=['POST'])
+def reverse_text():
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or not isinstance(payload.get('text'), str):
+        return jsonify(error='Please provide text to reverse.'), 400
+
+    text = payload['text']
+    if not text.strip():
+        return jsonify(error='Please enter text to reverse.'), 400
+    if len(text) > 12:
+        return jsonify(error='Please use 12 characters or fewer.'), 400
+
+    character_stack = Stack()
+    steps = []
+    for index, character in enumerate(text):
+        character_stack.push(character)
+        steps.append({
+            'phase': 'push',
+            'character': character,
+            'character_index': index,
+            'stack': character_stack.to_list(),
+            'output': '',
+            'explanation': f"Push '{character}' onto the stack.",
+        })
+
+    reversed_characters = []
+    pop_sequence = []
+    while character_stack.peek() is not None:
+        character = character_stack.pop()
+        reversed_characters.append(character)
+        output = ''.join(reversed_characters)
+        pop_step = {
+            'phase': 'pop',
+            'character': character,
+            'character_index': len(text) - len(reversed_characters),
+            'stack': character_stack.to_list(),
+            'output': output,
+            'explanation': f"Pop '{character}' → output so far: {output}.",
+        }
+        steps.append(pop_step)
+        pop_sequence.append(pop_step)
+
+    return jsonify(
+        steps=steps,
+        pop_sequence=pop_sequence,
+        result=''.join(reversed_characters),
+    )
+
 
 @app.route('/experiences')
 def experiences():
