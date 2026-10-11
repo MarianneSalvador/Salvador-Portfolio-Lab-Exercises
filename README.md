@@ -1,55 +1,72 @@
-# Marianne Salvador - Portfolio
+# DSA Portfolio
 
-A Flask portfolio with a profile, contact details, work samples, and an
-experiences page. The works section includes an uppercase converter, a linked
-list, and circle and triangle area calculators.
+A Flask-based portfolio that presents data-structure and algorithm visualizations alongside small interactive tools. Explore stack operations, convert expressions and numbers, reverse text, and calculate circle area through a browser-based interface.
 
-## Requirements
+## Tools
 
-- Python 3.10 or newer
-- pip
+- **Stack Visualizer** — push, pop, and peek at values in a linked-list-backed stack.
+- **Infix to Postfix** — convert arithmetic expressions using operator precedence.
+- **Circle Area** — calculate a circle's area from its radius using `π × radius²`.
+- **Decimal to Other Number System** — convert a non-negative decimal integer to binary, octal, or hexadecimal.
+- **Reverse a String** — reverse text using stack operations.
 
-## Run locally on Windows
+The Infix to Postfix, Decimal Conversion, and Reverse a String tools support **Next Step**, **Auto Play**, and **Show Result** to explore or complete their recorded steps. The Stack Visualizer presents individual stack operations and their effects.
 
-From PowerShell, change to the project folder and create a virtual environment:
+## Run locally
 
-```powershell
-py -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-.\.venv\Scripts\python.exe app.py
+Create and activate a virtual environment, install the dependencies, and start the Flask app:
+
+```text
+python -m venv .venv
 ```
 
-Open <http://127.0.0.1:5000/> in your browser. Stop the development server with
-Ctrl+C.
-
-To run the tests:
+Activate it on Windows:
 
 ```powershell
-.\.venv\Scripts\python.exe -m unittest test_linked_list.py -v
+.venv\Scripts\activate
 ```
 
-## Project contents
+Or on macOS/Linux:
 
-- `app.py` - Flask routes, calculator logic, linked-list operations, and the
-  editable `EXPERIENCES` data list.
-- `templates/` - Jinja page templates.
-- `static/css/` and `static/js/` - site styling and browser interactions.
-- `static/images/` - profile and experience photos.
-- `test_linked_list.py` - route and behavior tests.
-- `Flask_HTML.ipynb` - optional course notes; it is not needed to run the site.
+```sh
+source .venv/bin/activate
+```
 
-Update experience titles, dates, organizations, image paths, and bullet points
-in `EXPERIENCES` in `app.py`. Store image files under `static/images/` and use
-their paths relative to that directory.
+Then install and run:
 
-## Session secret
+```text
+pip install -r requirements.txt
+python app.py
+```
 
-For local development, the app generates a random Flask session secret when
-`FLASK_SECRET_KEY` is not set. This means signed sessions (including linked-list
-state) will reset when the app restarts. For a stable secret, set
-`FLASK_SECRET_KEY` in the environment before starting the app. Never commit a
-real secret or `.env` file.
+Alternatively, start the app with `flask run`. Open <http://127.0.0.1:5000/> in a browser. Stop the development server with Ctrl+C.
 
-The built-in Flask server runs with debug mode enabled in `app.py` for local
-development only. Do not expose that development server to the public internet.
+## Project structure
 
+```text
+.
+├── app.py
+├── stack.py
+├── requirements.txt
+├── README.md
+├── test_linked_list.py
+├── Flask_HTML.ipynb
+├── templates/
+│   ├── base.html
+│   ├── circle.html
+│   ├── stack.html
+│   ├── stack_tools.html
+│   └── other portfolio page templates
+└── static/
+    ├── css/
+    ├── images/
+    └── js/
+```
+
+## Technology
+
+- Python and Flask for the application and routes
+- HTML templates, CSS, and JavaScript for the browser interface
+- A linked-list `Stack` class in `stack.py`
+
+For local development, the app generates a session secret when `FLASK_SECRET_KEY` is not set. Set that environment variable if a stable session secret is needed. Do not commit real secrets or `.env` files. The built-in Flask server is for development, not public production deployment.
