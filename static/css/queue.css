@@ -1,0 +1,45 @@
+.queue-page { --stack-blue: #3d7cc9; --stack-next-bg: #c4c8cf; --stack-bin-border: #555b64; --stack-node-surface: #fff; --stack-data-highlight: #e6f1ff; min-width: 0; }
+:root[data-theme="dark"] .queue-page { --stack-blue: #8dbbff; --stack-next-bg: #3a4458; --stack-bin-border: #c5ceda; --stack-node-surface: #172238; --stack-data-highlight: #243c5a; }
+.queue-diagram-wrap { max-width: 100%; margin-top: 31px; padding: 0 0 10px; }
+.queue-diagram-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; }
+.queue-layout { width: max-content; min-width: 100%; display: flex; align-items: stretch; gap: 12px; padding: 30px 2px 14px; }
+.queue-end-label { align-self: center; flex: 0 0 auto; color: var(--soft); font: 11px var(--mono); white-space: nowrap; }
+.queue-tube { position: relative; min-width: 0; min-height: 180px; display: flex; flex: 1 0 auto; align-items: center; border-top: 6px solid var(--stack-bin-border); border-bottom: 6px solid var(--stack-bin-border); background: transparent; }
+.queue-nodes { min-height: 142px; display: flex; align-items: center; padding: 8px 0; }
+.queue-slot { flex: 0 0 132px; display: flex; flex-direction: column; align-items: stretch; }
+.queue-pointer-row { height: 23px; display: flex; justify-content: center; gap: 7px; white-space: nowrap; }
+.queue-pointer-label { color: var(--stack-blue); font: 600 11px/1.5 var(--mono); }
+.queue-node { width: 132px; min-height: 100px; }
+.queue-node .node-data { min-height: 66px; padding: 6px 7px; }
+.queue-node .node-value { font-size: 17px; }
+.queue-node .node-next { justify-content: center; gap: 6px; padding: 4px 6px; }
+.queue-node.stack-node--top .node-data { padding-top: 6px; background: var(--stack-data-highlight); }
+.queue-op-tag { width: max-content; max-width: 100%; overflow-wrap: anywhere; margin: 1px auto; padding: 0 4px; border: 1px solid var(--stack-blue); border-radius: 3px; color: var(--stack-blue); background: var(--surface); font: 9px/1.3 var(--mono); }
+.queue-connector { width: 29px; flex: 0 0 29px; display: grid; place-items: center; color: var(--stack-blue); font: 700 21px/1 var(--body); transition: opacity 220ms ease, transform 260ms ease; }
+.queue-connector--incoming { opacity: .2; transform: translateX(-5px); }
+.queue-connector--incoming.is-connected { opacity: 1; transform: translateX(0); }
+.queue-terminal { min-width: 29px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2px; color: var(--text); }
+.queue-terminal-x { font: 700 18px/1 var(--mono); }
+.queue-terminal-label { color: var(--soft); font: 9px var(--mono); }
+.queue-slot--incoming { opacity: 0; transform: translateX(25px); transition: opacity 360ms ease, transform 420ms cubic-bezier(.2,.8,.2,1); }
+.queue-slot--incoming.is-entered { opacity: 1; transform: translateX(0); }
+.queue-slot--removed { transition: opacity 320ms ease, transform 420ms cubic-bezier(.2,.8,.2,1); }
+.queue-slot--removed.is-exiting { opacity: 0; transform: translateX(-55px); }
+.queue-node--reading { animation: node-read 620ms ease-in-out 2; box-shadow: 0 0 0 4px color-mix(in srgb, var(--stack-blue) 32%, transparent), 0 0 18px color-mix(in srgb, var(--stack-blue) 45%, transparent); }
+.queue-read-marker { position: absolute; z-index: 3; top: -23px; left: 50%; transform: translateX(-50%); color: var(--stack-blue); font: 11px var(--mono); animation: read-bob 550ms ease-in-out infinite alternate; }
+.queue-empty { position: static; inset: auto; margin: 0 auto; padding-inline: 16px; transform: none; white-space: nowrap; }
+.queue-end-label, .queue-empty { user-select: none; }
+.queue-fifo-note { margin: 18px 0 6px; color: var(--soft); font-size: 13px; }
+.queue-comparison { margin: 0; color: var(--faint); font: 12px/1.6 var(--mono); }
+@media (max-width: 680px) {
+    .queue-page { padding-top: 48px; }
+    .queue-page .stack-card { padding: 18px 14px; }
+    .queue-page .stack-input-row { grid-template-columns: 1fr; }
+    .queue-page .stack-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .queue-page .stack-buttons .button { padding-inline: 7px; font-size: 12px; }
+    .queue-layout { gap: 9px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .queue-node, .queue-connector, .queue-slot--incoming, .queue-slot--removed { transition-duration: .01ms; }
+    .queue-node--reading, .queue-read-marker { animation: none; }
+}

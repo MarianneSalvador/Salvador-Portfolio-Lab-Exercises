@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Queue Visualizer | Marianne Salvador{% endblock %}
+{% block page_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stack.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/queue.css') }}">
+{% endblock %}
+{% block content %}
+<section class="tool-page stack-page queue-page section-space" aria-labelledby="queue-title">
+    <a class="back-link" href="{{ url_for('works') }}"><span aria-hidden="true">←</span> Back to Works</a>
+    <p class="eyebrow">06 / Data structures</p>
+    <h1 id="queue-title">Queue <span class="accent-text">(FIFO).</span></h1>
+    <p class="tool-description">Enqueue at the rear and dequeue from the front.</p>
+
+    <section class="stack-card" aria-label="Queue controls and visualization">
+        <div class="stack-controls">
+            <label for="queue-input">Enter data</label>
+            <div class="stack-input-row">
+                <input id="queue-input" name="value" type="text" maxlength="12" placeholder="Enter data" autocomplete="off" aria-describedby="queue-status">
+                <div class="stack-buttons">
+                    <button class="button button-primary" type="button" data-action="enqueue">Enqueue</button>
+                    <button class="button button-secondary" type="button" data-action="dequeue">Dequeue</button>
+                    <button class="button button-secondary" type="button" data-action="peek">Peek</button>
+                    <button class="button button-quiet" type="button" data-action="reset">Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="queue-diagram-wrap">
+            <div class="queue-diagram-scroll" role="region" aria-label="Queue visualization, front to rear" tabindex="0">
+                <div class="queue-layout">
+                    <span class="queue-end-label">dequeue (out)</span>
+                    <div class="queue-tube" id="queue-tube">
+                        <p class="stack-empty queue-empty" id="queue-empty">front = None, rear = None</p>
+                        <div class="queue-nodes" id="queue-nodes"></div>
+                    </div>
+                    <span class="queue-end-label">enqueue (in)</span>
+                </div>
+            </div>
+        </div>
+
+        <section class="stack-details" aria-label="Operation details">
+            <p class="stack-status" id="queue-status" role="status" aria-live="polite">Loading queue...</p>
+            <div class="stack-metrics">
+                <p><span>size</span><strong id="queue-size">0</strong></p>
+                <p><span>front</span><strong id="queue-front">None</strong></p>
+                <p><span>rear</span><strong id="queue-rear">None</strong></p>
+            </div>
+            <section class="stack-history" aria-labelledby="queue-history-title">
+                <h2 id="queue-history-title">Recent operations</h2>
+                <ol id="queue-history" aria-live="polite">
+                    <li class="stack-history-empty">Operations and returned values will appear here.</li>
+                </ol>
+            </section>
+            <div class="stack-explanation">
+                <h2>What happens</h2>
+                <ol id="queue-operation-steps"></ol>
+            </div>
+            <div class="stack-code-panel">
+                <div class="stack-code-heading"><span>Python</span><span id="queue-method-name">enqueue</span></div>
+                <pre aria-label="Python method"><code id="queue-method-code"></code></pre>
+            </div>
+            <p class="queue-fifo-note">Items are added at the rear and removed from the front (FIFO: first in, first out).</p>
+            <p class="queue-comparison">Stack: last in, first out. Queue: first in, first out.</p>
+        </section>
+    </section>
+</section>
+{% endblock %}
+{% block page_scripts %}
+    <script src="{{ url_for('static', filename='js/queue.js') }}" defer></script>
+{% endblock %}

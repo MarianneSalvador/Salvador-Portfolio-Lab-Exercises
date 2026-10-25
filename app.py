@@ -3,6 +3,7 @@ import os
 import secrets
 
 from flask import Flask, jsonify, render_template, request, session
+from queue_ll import Queue
 from stack import Stack
 
 app = Flask(__name__)
@@ -185,6 +186,11 @@ def stack_tools():
     return render_template('stack_tools.html')
 
 
+@app.route('/works/queue')
+def queue_visualization():
+    return render_template('queue_visualizer.html')
+
+
 def _session_stack():
     result = Stack()
     for value in reversed(session.get('stack_items', [])):
@@ -234,6 +240,61 @@ def stack_peek():
 def stack_reset():
     session['stack_items'] = []
     return jsonify(stack=[])
+
+
+def _session_queue():
+    result = Queue()
+    for value in session.get('queue_items', []):
+        result.enqueue(value)
+    return result
+
+
+def _save_session_queue(current_queue):
+    session['queue_items'] = current_queue.to_list()
+
+
+@app.route('/api/queue/state')
+def queue_state():
+    return jsonify(queue=_session_queue().to_list())
+
+
+@app.route('/api/queue/enqueue', methods=['POST'])
+def queue_enqueue():
+    current_queue = _session_queue()
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict) or not isinstance(payload.get('value'), str):
+        return jsonify(error='Please provide a string value.', queue=current_queue.to_list()), 400
+
+    value = payload['value'].strip()
+    if not value:
+        return jsonify(error='Please enter a value before enqueueing.', queue=current_queue.to_list()), 400
+    if len(value) > 12:
+        return jsonify(error='Please use a value no longer than 12 characters.', queue=current_queue.to_list()), 400
+    if current_queue.size() >= 10:
+        return jsonify(error='The queue is full (10 items maximum). Dequeue an item before enqueueing again.', queue=current_queue.to_list()), 400
+
+    current_queue.enqueue(value)
+    _save_session_queue(current_queue)
+    return jsonify(queue=current_queue.to_list())
+
+
+@app.route('/api/queue/dequeue', methods=['POST'])
+def queue_dequeue():
+    current_queue = _session_queue()
+    dequeued = current_queue.dequeue()
+    _save_session_queue(current_queue)
+    return jsonify(dequeued=dequeued, queue=current_queue.to_list())
+
+
+@app.route('/api/queue/peek')
+def queue_peek():
+    return jsonify(peek=_session_queue().peek())
+
+
+@app.route('/api/queue/reset', methods=['POST'])
+def queue_reset():
+    session['queue_items'] = []
+    return jsonify(queue=[])
 
 
 def _infix_postfix_steps(expression):
