@@ -4,6 +4,7 @@ import secrets
 
 from flask import Flask, jsonify, render_template, request, session
 from queue_ll import Queue
+from sorting_algorithms import SortingAlgorithms
 from stack import Stack
 
 app = Flask(__name__)
@@ -189,6 +190,49 @@ def stack_tools():
 @app.route('/works/queue')
 def queue_visualization():
     return render_template('queue_visualizer.html')
+
+
+@app.route('/sorting')
+def sorting_visualizer():
+    return render_template('sorting_visualizer.html')
+
+
+@app.route('/diagram-values')
+def sorting_diagram_values():
+    return jsonify([115, 42, 15, 88, 75, 23, 93, 30, 10, 55, 100, 70, 48, 63, 37, 82])
+
+
+@app.route('/sort/<algorithm_type>', methods=['POST'])
+def sorting_steps(algorithm_type):
+    allowed_algorithms = {
+        'bubble_sort',
+        'insertion_sort',
+        'selection_sort',
+        'quick_sort',
+        'merge_sort',
+        'heap_sort',
+    }
+    if algorithm_type not in allowed_algorithms:
+        return jsonify(error='Invalid algorithm type'), 400
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error='Request body must be a JSON object.'), 400
+
+    values = payload.get('values')
+    if not isinstance(values, list) or not 1 <= len(values) <= 50:
+        return jsonify(error='Values must be a list containing 1 to 50 numbers.'), 400
+    if any(
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or (isinstance(value, float) and not math.isfinite(value))
+        for value in values
+    ):
+        return jsonify(error='Each value must be a finite number (integer or float).'), 400
+
+    sorter = SortingAlgorithms()
+    steps = getattr(sorter, algorithm_type)(list(values))
+    return jsonify(steps=steps)
 
 
 def _session_stack():
