@@ -37,7 +37,7 @@
 
 .sv-page .nav-list {
     display: flex;
-    width: 200%;
+    width: 166.6667%;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -46,7 +46,7 @@
 
 .sv-page .nav-items {
     display: flex;
-    width: 16.6667%;
+    width: 20%;
     justify-content: center;
     padding: 8px;
 }
@@ -59,7 +59,8 @@
 }
 
 .sv-page .method:hover,
-.sv-page .method:focus-visible {
+.sv-page .method:focus-visible,
+.sv-page .method.is-selected {
     border-color: var(--accent);
     color: var(--accent);
 }
@@ -83,8 +84,9 @@
     display: flex;
     width: 100%;
     min-height: 310px;
-    align-items: end;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    justify-content: flex-end;
     margin-top: 24px;
     overflow-x: auto;
     border: 1px solid var(--line);
@@ -96,7 +98,22 @@
     position: relative;
     width: 640px;
     min-width: 640px;
-    height: 290px;
+    height: 260px;
+}
+
+.sv-page #bars-placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 16px;
+    color: var(--faint);
+    text-align: center;
+}
+
+.sv-page #bars-placeholder[hidden] {
+    display: none;
 }
 
 .sv-page .bar {
@@ -106,6 +123,76 @@
     border-radius: 5px 5px 0 0;
     background: var(--accent);
     transition: height 160ms ease;
+}
+
+.sv-page .bar-value {
+    position: absolute;
+    bottom: calc(100% + 4px);
+    left: 50%;
+    color: var(--text);
+    font: 11px/1 var(--mono);
+    transform: translateX(-50%);
+}
+
+.sv-page .values-form {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.sv-page .values-field {
+    display: flex;
+    width: min(100%, 540px);
+    flex-direction: column;
+    gap: 6px;
+    color: var(--soft);
+    font: 12px/1.5 var(--mono);
+}
+
+.sv-page .values-input-row {
+    display: flex;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.sv-page .values-field input {
+    width: 100%;
+    min-width: 0;
+    min-height: 42px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    color: var(--text);
+    background: var(--raised);
+    font: 13px var(--mono);
+}
+
+.sv-page .apply-values {
+    min-height: 42px;
+    flex-shrink: 0;
+}
+
+.sv-page .apply-values:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+.sv-page .values-message {
+    min-height: 1.5em;
+    margin: 0;
+    color: var(--danger);
+    font-size: 13px;
+    text-align: center;
+}
+
+.sv-page .values-output {
+    width: 640px;
+    min-width: 640px;
+    margin: 0;
+    color: var(--soft);
+    font: 13px/1.5 var(--mono);
+    text-align: center;
+    white-space: nowrap;
 }
 
 .sv-page .information-section {
@@ -195,6 +282,7 @@
 .sv-page .reset-row {
     display: flex;
     justify-content: center;
+    gap: 10px;
     margin-top: 22px;
 }
 
@@ -224,7 +312,7 @@
     }
 
     .sv-page .nav-list {
-        width: 300%;
+        width: 250%;
     }
 
     .sv-page .method {
@@ -243,7 +331,19 @@
     }
 
     .sv-page .bar-container {
-        height: 250px;
+        height: 220px;
+    }
+
+    .sv-page .values-input-row {
+        flex-direction: column;
+    }
+
+    .sv-page .values-field {
+        width: 100%;
+    }
+
+    .sv-page .apply-values {
+        width: 100%;
     }
 
     .sv-page .speed-container {

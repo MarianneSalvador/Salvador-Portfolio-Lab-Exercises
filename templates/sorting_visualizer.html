@@ -17,19 +17,33 @@
                 <button id="prev" class="slider-button left-slider-button" type="button" aria-label="Previous algorithms">←</button>
                 <div class="slider-wrapper">
                     <ul class="nav-list">
-                        <li class="nav-items"><button class="method button button-secondary" id="bubble-sort" type="button" aria-label="Bubble Sort">Bubble Sort</button></li>
-                        <li class="nav-items"><button class="method button button-secondary" id="insertion-sort" type="button" aria-label="Insertion Sort">Insertion Sort</button></li>
-                        <li class="nav-items"><button class="method button button-secondary" id="selection-sort" type="button" aria-label="Selection Sort">Selection Sort</button></li>
-                        <li class="nav-items"><button class="method button button-secondary" id="quick-sort" type="button" aria-label="Quick Sort">Quick Sort</button></li>
-                        <li class="nav-items"><button class="method button button-secondary" id="merge-sort" type="button" aria-label="Merge Sort">Merge Sort</button></li>
-                        <li class="nav-items"><button class="method button button-secondary" id="heap-sort" type="button" aria-label="Heap Sort">Heap Sort</button></li>
+                        <li class="nav-items"><button class="method button button-secondary" id="bubble-sort" type="button" aria-label="Bubble Sort" aria-pressed="false">Bubble Sort</button></li>
+                        <li class="nav-items"><button class="method button button-secondary" id="insertion-sort" type="button" aria-label="Insertion Sort" aria-pressed="false">Insertion Sort</button></li>
+                        <li class="nav-items"><button class="method button button-secondary" id="selection-sort" type="button" aria-label="Selection Sort" aria-pressed="false">Selection Sort</button></li>
+                        <li class="nav-items"><button class="method button button-secondary" id="quick-sort" type="button" aria-label="Quick Sort" aria-pressed="false">Quick Sort</button></li>
+                        <li class="nav-items"><button class="method button button-secondary" id="merge-sort" type="button" aria-label="Merge Sort" aria-pressed="false">Merge Sort</button></li>
                     </ul>
                 </div>
                 <button id="next" class="slider-button right-slider-button" type="button" aria-label="Next algorithms">→</button>
             </nav>
 
+            <form id="values-form" class="values-form" novalidate>
+                <div class="values-field">
+                    <label for="custom-values">Your numbers</label>
+                    <div class="values-input-row">
+                        <input id="custom-values" name="values" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 5, 3, 8, 1">
+                        <button id="apply-values" class="button button-secondary apply-values" type="submit">Use these numbers</button>
+                    </div>
+                    <span>Enter 2 to 12 numbers between 1 and 999, separated by commas.</span>
+                    <p id="values-message" class="values-message" role="status" aria-live="polite"></p>
+                </div>
+            </form>
+
             <section class="algorithm-section sorting-visualization" aria-label="Sorting animation">
-                <div class="bar-container" aria-live="polite"></div>
+                <div class="bar-container" aria-live="polite">
+                    <p id="bars-placeholder">Type your numbers or load an example</p>
+                </div>
+                <p id="values-output" class="values-output" aria-live="polite"></p>
             </section>
 
             <section class="information-section" aria-label="Algorithm information">
@@ -57,10 +71,6 @@
                         <h3>Merge Sort</h3>
                         <p>Merge Sort divides the list into smaller parts, sorts them, then merges the sorted parts.</p>
                     </div>
-                    <div class="algorithm-info">
-                        <h3>Heap Sort</h3>
-                        <p>Heap Sort repeatedly removes the largest value from a max-heap and places it at the end of the list.</p>
-                    </div>
                 </aside>
             </section>
 
@@ -70,6 +80,7 @@
             </div>
             <div class="reset-row">
                 <button id="reset" class="reset-bars button button-secondary" type="button">Reset bars</button>
+                <button id="load-example" class="button button-secondary" type="button">Load example numbers</button>
             </div>
         </section>
         <p class="sv-credit">Adapted from <a href="https://github.com/stian96/algorithm-visualizer" rel="noopener noreferrer">stian96/algorithm-visualizer</a> (MIT License).</p>

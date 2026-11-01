@@ -9,7 +9,7 @@ A Flask-based portfolio that presents data-structure and algorithm visualization
 - **Circle Area** — calculate a circle's area from its radius using `π × radius²`.
 - **Decimal to Other Number System** — convert a non-negative decimal integer to binary, octal, or hexadecimal.
 - **Reverse a String** — reverse text using stack operations.
-- **Sorting Algorithms** — visualize Bubble, Insertion, Selection, Quick, Merge, and Heap sort.
+- **Sorting Algorithms** — visualize Bubble, Insertion, Selection, Quick, and Merge sort.
 
 The Infix to Postfix, Decimal Conversion, and Reverse a String tools support **Next Step**, **Auto Play**, and **Show Result** to explore or complete their recorded steps. The Stack Visualizer presents individual stack operations and their effects.
 

@@ -1,5 +1,6 @@
 import math
 import os
+import re
 import secrets
 
 from flask import Flask, jsonify, render_template, request, session
@@ -199,7 +200,42 @@ def sorting_visualizer():
 
 @app.route('/diagram-values')
 def sorting_diagram_values():
-    return jsonify([115, 42, 15, 88, 75, 23, 93, 30, 10, 55, 100, 70, 48, 63, 37, 82])
+    return jsonify([115, 42, 15, 88, 75, 23, 93, 30, 10, 55, 100, 70])
+
+
+def _parse_sort_values(raw_values):
+    if isinstance(raw_values, str):
+        pieces = [piece for piece in re.split(r'[,;\s]+', raw_values) if piece]
+    elif isinstance(raw_values, list):
+        pieces = [str(value) for value in raw_values]
+    elif raw_values is None:
+        pieces = []
+    else:
+        return None, 'Values must be a comma-separated string or a list.'
+
+    if not pieces:
+        return None, 'Enter some numbers first, like 5, 3, 8.'
+
+    values = []
+    for piece in pieces:
+        if '.' in piece:
+            if re.search(r'[0-9]\.[0-9]', piece):
+                return None, f'“{piece}” has a decimal. Use whole numbers only.'
+            return None, f'“{piece}” has a period. Use commas to separate numbers, like 5, 3, 8.'
+        if piece.startswith('-'):
+            return None, f'“{piece}” is negative. Use numbers from 1 to 999.'
+        if not re.fullmatch(r'[0-9]+', piece):
+            return None, f'“{piece}” isn\'t a number. Use digits only, like 5, 3, 8.'
+        normalized = piece.lstrip('0') or '0'
+        values.append(int(normalized) if len(normalized) <= 3 else 1000)
+
+    if len(values) < 2:
+        return None, 'Enter at least 2 numbers.'
+    if len(values) > 12:
+        return None, 'Use up to 12 numbers.'
+    if any(value < 1 or value > 999 for value in values):
+        return None, 'Numbers must be between 1 and 999.'
+    return values, None
 
 
 @app.route('/sort/<algorithm_type>', methods=['POST'])
@@ -210,7 +246,6 @@ def sorting_steps(algorithm_type):
         'selection_sort',
         'quick_sort',
         'merge_sort',
-        'heap_sort',
     }
     if algorithm_type not in allowed_algorithms:
         return jsonify(error='Invalid algorithm type'), 400
@@ -219,19 +254,12 @@ def sorting_steps(algorithm_type):
     if not isinstance(payload, dict):
         return jsonify(error='Request body must be a JSON object.'), 400
 
-    values = payload.get('values')
-    if not isinstance(values, list) or not 1 <= len(values) <= 50:
-        return jsonify(error='Values must be a list containing 1 to 50 numbers.'), 400
-    if any(
-        isinstance(value, bool)
-        or not isinstance(value, (int, float))
-        or (isinstance(value, float) and not math.isfinite(value))
-        for value in values
-    ):
-        return jsonify(error='Each value must be a finite number (integer or float).'), 400
+    values, error = _parse_sort_values(payload.get('values'))
+    if error:
+        return jsonify(error=error), 400
 
     sorter = SortingAlgorithms()
-    steps = getattr(sorter, algorithm_type)(list(values))
+    steps = getattr(sorter, algorithm_type)(values)
     return jsonify(steps=steps)
 
 

@@ -1,5 +1,4 @@
 # Adapted from stian96/algorithm-visualizer (MIT License), https://github.com/stian96/algorithm-visualizer
-from datastructures.maxheap import MaxHeap
 
 
 class SortingAlgorithms:
@@ -203,23 +202,3 @@ class SortingAlgorithms:
             k += 1
 
         return original_array
-
-    def heap_sort(self, array):
-        """
-        Sorts the array in ascending order using the heap sort algorithm.
-        This algorithm has a time complexity of O(n log n), where n is the length of the list.
-        """
-        steps = [array.copy()]
-        heap = MaxHeap()
-        n = len(array)
-
-        # Add all array elements to the max-heap.
-        for i in range(n):
-            heap.add(array[i])
-
-        # Pop all the elements from the max-heap.
-        for i in range(n - 1, -1, -1):
-            array[i] = heap.pop_max()
-            steps.append(array.copy())
-        
-        return steps
