@@ -1,9 +1,11 @@
+import inspect
 import math
 import os
 import re
 import secrets
 
 from flask import Flask, jsonify, render_template, request, session
+from binary_tree import BinaryTree, Node as TreeNode
 from queue_ll import Queue
 from sorting_algorithms import SortingAlgorithms
 from stack import Stack
@@ -191,6 +193,353 @@ def stack_tools():
 @app.route('/works/queue')
 def queue_visualization():
     return render_template('queue_visualizer.html')
+
+
+def _tree_from_session():
+    def build_node(data):
+        if data is None:
+            return None
+        node = TreeNode(data['value'])
+        node.left = build_node(data.get('left'))
+        node.right = build_node(data.get('right'))
+        return node
+
+    tree = BinaryTree()
+    tree.root = build_node(session.get('binary_tree'))
+    return tree
+
+
+def _tree_to_session(node):
+    if node is None:
+        return None
+    return {
+        'value': str(node.data),
+        'left': _tree_to_session(node.left),
+        'right': _tree_to_session(node.right),
+    }
+
+
+def _tree_paths(root):
+    paths = {}
+
+    def visit(node, path):
+        if node is None:
+            return
+        paths[path] = node
+        visit(node.left, path + 'l')
+        visit(node.right, path + 'r')
+
+    visit(root, '')
+    return paths
+
+
+def _tree_layout(root):
+    nodes = []
+    edges = []
+
+    def inorder(node, path, depth):
+        if node is None:
+            return
+        inorder(node.left, path + 'l', depth + 1)
+        nodes.append({
+            'path': path,
+            'value': str(node.data),
+            'x': len(nodes),
+            'y': depth,
+        })
+        inorder(node.right, path + 'r', depth + 1)
+
+    inorder(root, '', 0)
+
+    def add_edges(node, path):
+        if node is None:
+            return
+        if node.left is not None:
+            edges.append([path, path + 'l'])
+            add_edges(node.left, path + 'l')
+        if node.right is not None:
+            edges.append([path, path + 'r'])
+            add_edges(node.right, path + 'r')
+
+    add_edges(root, '')
+    return {'nodes': nodes, 'edges': edges}
+
+
+def _tree_api_response(root, message='', steps=None, status=200):
+    return jsonify(
+        tree=_tree_layout(root),
+        message=message,
+        steps=steps or [],
+    ), status
+
+
+def _tree_payload():
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return None, 'Request body must be a JSON object.'
+    return payload, None
+
+
+def _tree_value(raw_value):
+    if isinstance(raw_value, bool) or not isinstance(raw_value, (str, int)):
+        return None, 'Enter a value that is 1 to 6 characters long.'
+    value = str(raw_value).strip()
+    if not 1 <= len(value) <= 6:
+        return None, 'Enter a value that is 1 to 6 characters long.'
+    return value, None
+
+
+def _tree_node_at_path(root, path):
+    if not isinstance(path, str) or any(direction not in 'lr' for direction in path):
+        return None
+    node = root
+    for direction in path:
+        if node is None:
+            return None
+        node = node.left if direction == 'l' else node.right
+    return node
+
+
+def _tree_max_depth(root):
+    if root is None:
+        return 0
+    return 1 + max(_tree_max_depth(root.left), _tree_max_depth(root.right))
+
+
+def _tree_size(root):
+    if root is None:
+        return 0
+    return 1 + _tree_size(root.left) + _tree_size(root.right)
+
+
+def _tree_preorder_nodes(root):
+    result = []
+
+    def visit(node, path):
+        if node is None:
+            return
+        result.append((path, node))
+        visit(node.left, path + 'l')
+        visit(node.right, path + 'r')
+
+    visit(root, '')
+    return result
+
+
+@app.route('/tree')
+def binary_tree_visualizer():
+    tree = _tree_from_session()
+    initial_tree = _tree_layout(tree.root)
+    method_names = (
+        'insert_left',
+        'insert_right',
+        'preorder_traversal',
+        'inorder_traversal',
+        'postorder_traversal',
+        'search',
+        'delete_node',
+    )
+    source = {
+        name: inspect.getsource(getattr(BinaryTree, name))
+        for name in method_names
+    }
+    return render_template(
+        'binary_tree_visualizer.html',
+        initial_tree=initial_tree,
+        initial_message=(
+            'Tree restored from your session.'
+            if initial_tree['nodes']
+            else 'Create a tree or load the example'
+        ),
+        source=source,
+    )
+
+
+@app.route('/api/tree/create', methods=['POST'])
+def binary_tree_create():
+    payload, error = _tree_payload()
+    if error:
+        tree = _tree_from_session()
+        return _tree_api_response(tree.root, error, status=400)
+    value, error = _tree_value(payload.get('value'))
+    if error:
+        tree = _tree_from_session()
+        return _tree_api_response(tree.root, error, status=400)
+    tree = BinaryTree()
+    tree.root = TreeNode(value)
+    session['binary_tree'] = _tree_to_session(tree.root)
+    return _tree_api_response(tree.root, f'Created a tree with root {value}.')
+
+
+@app.route('/api/tree/example', methods=['POST'])
+def binary_tree_example():
+    tree = BinaryTree()
+    tree.root = TreeNode('R')
+    node_a = tree.insert_left(tree.root, 'A')
+    node_b = tree.insert_right(tree.root, 'B')
+    tree.insert_left(node_a, 'C')
+    tree.insert_right(node_a, 'D')
+    tree.insert_left(node_b, 'E')
+    node_f = tree.insert_right(node_b, 'F')
+    tree.insert_left(node_f, 'G')
+    session['binary_tree'] = _tree_to_session(tree.root)
+    return _tree_api_response(tree.root, 'Loaded the lecture example tree.')
+
+
+@app.route('/api/tree/insert', methods=['POST'])
+def binary_tree_insert():
+    tree = _tree_from_session()
+    payload, error = _tree_payload()
+    if error:
+        return _tree_api_response(tree.root, error, status=400)
+    value, error = _tree_value(payload.get('value'))
+    if error:
+        return _tree_api_response(tree.root, error, status=400)
+    path = payload.get('path')
+    parent = _tree_node_at_path(tree.root, path)
+    if parent is None:
+        return _tree_api_response(tree.root, 'Select a node before inserting.', status=400)
+    side = payload.get('side')
+    if not isinstance(side, str) or side not in {'left', 'right'}:
+        return _tree_api_response(tree.root, 'Choose left or right for the insertion side.', status=400)
+    if _tree_size(tree.root) >= 15:
+        return _tree_api_response(tree.root, 'Tree is full (maximum 15 nodes and 5 levels).', status=400)
+
+    current_child = parent.left if side == 'left' else parent.right
+    branch_levels = len(path) + 2
+    if current_child is not None:
+        branch_levels += _tree_max_depth(current_child)
+    if max(_tree_max_depth(tree.root), branch_levels) > 5:
+        return _tree_api_response(tree.root, 'Tree is full (maximum 15 nodes and 5 levels).', status=400)
+
+    if side == 'left':
+        tree.insert_left(parent, value)
+    else:
+        tree.insert_right(parent, value)
+    session['binary_tree'] = _tree_to_session(tree.root)
+    message = f'Inserted {value} to the {side} of the selected node.'
+    if current_child is not None:
+        message += f' The new node is between the selected node and its old child; the old child moves under the new node on the same side.'
+    return _tree_api_response(tree.root, message)
+
+
+@app.route('/api/tree/traverse', methods=['POST'])
+def binary_tree_traverse():
+    tree = _tree_from_session()
+    payload, error = _tree_payload()
+    if error:
+        return _tree_api_response(tree.root, error, status=400)
+    traversal_type = payload.get('type')
+    method_names = {
+        'preorder': 'preorder_traversal',
+        'inorder': 'inorder_traversal',
+        'postorder': 'postorder_traversal',
+    }
+    if not isinstance(traversal_type, str) or traversal_type not in method_names:
+        return _tree_api_response(tree.root, 'Choose preorder, inorder, or postorder traversal.', status=400)
+
+    method = getattr(tree, method_names[traversal_type])
+    method_result = method(tree.root, '')
+    visits = {
+        'preorder': _tree_preorder_nodes(tree.root),
+        'inorder': [],
+        'postorder': [],
+    }
+
+    def collect_order(node, path, order):
+        if node is None:
+            return
+        if traversal_type == 'inorder':
+            collect_order(node.left, path + 'l', order)
+            order.append((path, node))
+            collect_order(node.right, path + 'r', order)
+        elif traversal_type == 'postorder':
+            collect_order(node.left, path + 'l', order)
+            collect_order(node.right, path + 'r', order)
+            order.append((path, node))
+
+    if traversal_type != 'preorder':
+        collect_order(tree.root, '', visits[traversal_type])
+    ordered_nodes = visits[traversal_type]
+    steps = [
+        {'highlight': [path], 'message': f'Visit {node.data}'}
+        for path, node in ordered_nodes
+    ]
+    result = ' '.join(str(node.data) for _, node in ordered_nodes)
+    if method_result.rstrip() != result:
+        return _tree_api_response(tree.root, 'Traversal result did not match the recorded visits.', status=500)
+    return _tree_api_response(tree.root, result, steps)
+
+
+@app.route('/api/tree/search', methods=['POST'])
+def binary_tree_search():
+    tree = _tree_from_session()
+    payload, error = _tree_payload()
+    if error:
+        return _tree_api_response(tree.root, error, status=400)
+    value, error = _tree_value(payload.get('value'))
+    if error:
+        return _tree_api_response(tree.root, error, status=400)
+    target = tree.search(tree.root, value)
+    steps = []
+    for path, node in _tree_preorder_nodes(tree.root):
+        steps.append({'highlight': [path], 'message': f'Visit {node.data}'})
+        if node is target:
+            steps[-1]['message'] = f'Found {value}'
+            break
+    message = f'Found {value}' if target is not None else f'{value} was not found'
+    return _tree_api_response(tree.root, message, steps)
+
+
+@app.route('/api/tree/delete', methods=['POST'])
+def binary_tree_delete():
+    tree = _tree_from_session()
+    payload, error = _tree_payload()
+    if error:
+        return _tree_api_response(tree.root, error, status=400)
+    value, error = _tree_value(payload.get('value'))
+    if error:
+        return _tree_api_response(tree.root, error, status=400)
+
+    target = tree.search(tree.root, value)
+    if target is None:
+        return _tree_api_response(tree.root, f'{value} was not found')
+    paths = _tree_paths(tree.root)
+    target_path = next(path for path, node in paths.items() if node is target)
+    queue = [(tree.root, '')]
+    deepest_path = ''
+    while queue:
+        node, path = queue.pop(0)
+        deepest_path = path
+        if node.left is not None:
+            queue.append((node.left, path + 'l'))
+        if node.right is not None:
+            queue.append((node.right, path + 'r'))
+    deepest_node = paths[deepest_path]
+    steps = [
+        {'highlight': [target_path], 'message': f'Delete {target.data}'},
+        {'highlight': [deepest_path], 'message': f'The deepest rightmost node is {deepest_node.data}'},
+    ]
+    replacement = deepest_node.data
+    tree.root = tree.delete_node(tree.root, value)
+    session['binary_tree'] = _tree_to_session(tree.root)
+    message = (
+        f'Removed {value}.'
+        if target_path == deepest_path
+        else f'Replaced {value} with {replacement} and removed the deepest rightmost node.'
+    )
+    steps.append({
+        'highlight': [],
+        'message': message,
+        'tree': _tree_layout(tree.root),
+    })
+    return _tree_api_response(tree.root, message, steps)
+
+
+@app.route('/api/tree/reset', methods=['POST'])
+def binary_tree_reset():
+    session['binary_tree'] = None
+    return _tree_api_response(None, 'Tree reset.')
 
 
 @app.route('/sorting')

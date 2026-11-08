@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Binary Tree Visualizer | Marianne Salvador{% endblock %}
+{% block page_styles %}<link rel="stylesheet" href="{{ url_for('static', filename='css/tree.css') }}">{% endblock %}
+{% block content %}
+<section class="tool-page tree-page">
+    <a class="back-link" href="{{ url_for('works') }}">← Back to tools</a>
+    <p class="eyebrow">Data structure visualizer</p>
+    <h1>Binary Tree Visualizer</h1>
+    <p class="tool-description">Insert, traverse, search, and delete nodes in a binary tree.</p>
+
+    <div class="tree-card tool-card">
+        <p class="tree-selected" id="tree-selected" aria-live="polite" hidden></p>
+        <div class="tree-controls" id="tree-operation-controls">
+            <form class="tree-control-row" id="tree-create-form">
+                <label for="tree-root-value">Root value</label>
+                <input id="tree-root-value" type="text" maxlength="6" autocomplete="off" placeholder="R">
+                <button class="button button-primary" type="submit">Create tree</button>
+                <button class="button button-secondary" id="tree-example" type="button">Load example tree</button>
+            </form>
+
+            <div class="tree-control-row tree-insert-row">
+                <label for="tree-new-value">New value</label>
+                <input id="tree-new-value" type="text" maxlength="6" autocomplete="off" placeholder="A" disabled>
+                <button class="button button-secondary" type="button" data-insert-side="left" disabled>Insert left</button>
+                <button class="button button-secondary" type="button" data-insert-side="right" disabled>Insert right</button>
+            </div>
+
+            <div class="tree-control-row tree-action-row">
+                <button class="button button-secondary" type="button" data-traversal="preorder" disabled>Preorder</button>
+                <button class="button button-secondary" type="button" data-traversal="inorder" disabled>Inorder</button>
+                <button class="button button-secondary" type="button" data-traversal="postorder" disabled>Postorder</button>
+                <label for="tree-search-value">Value</label>
+                <input id="tree-search-value" type="text" maxlength="6" autocomplete="off" placeholder="Value" disabled>
+                <button class="button button-secondary" id="tree-search" type="button" disabled>Search</button>
+                <button class="button button-secondary" id="tree-delete" type="button" disabled>Delete</button>
+            </div>
+        </div>
+
+        <p class="tree-message" id="tree-message" aria-live="polite">{{ initial_message }}</p>
+        <p class="tree-hint" id="tree-hint" aria-live="polite"></p>
+        <div class="tree-diagram-wrap" id="tree-diagram-wrap" hidden>
+            <svg class="tree-diagram" id="tree-diagram" role="group" aria-label="Binary tree diagram"></svg>
+        </div>
+        <div class="tree-empty" id="tree-empty">Create a tree or load the example</div>
+
+        <div class="playback-controls tree-playback">
+            <button class="button button-secondary" id="tree-next" type="button" disabled>Next Step</button>
+            <button class="button button-secondary" id="tree-auto" type="button" disabled>Auto Play</button>
+            <button class="button button-secondary" id="tree-show-result" type="button" disabled>Show Result</button>
+            <button class="button button-quiet" id="tree-reset" type="button">Reset</button>
+        </div>
+        <p class="tree-step-message" id="tree-step-message" aria-live="polite"></p>
+        <div class="output-panel tree-result" id="tree-result" hidden>
+            <p class="output-label"><span class="output-dot" aria-hidden="true"></span> Result</p>
+            <p class="output-value" id="tree-result-value"></p>
+        </div>
+        <div class="error-panel tree-error" id="tree-error" role="alert" hidden><span>!</span><p></p></div>
+    </div>
+
+    <section class="tree-source-section" aria-labelledby="tree-source-heading">
+        <div class="tree-source-heading">
+            <h2 id="tree-source-heading">Python source</h2>
+            <label for="tree-source-method">Method</label>
+            <select id="tree-source-method" class="tree-source-select">
+                <option value="insert_left">insert_left</option>
+                <option value="insert_right">insert_right</option>
+                <option value="preorder_traversal">preorder_traversal</option>
+                <option value="inorder_traversal">inorder_traversal</option>
+                <option value="postorder_traversal">postorder_traversal</option>
+                <option value="search">search</option>
+                <option value="delete_node">delete_node</option>
+            </select>
+        </div>
+        <div class="code-window">
+            <pre class="code-lines tree-source"><code id="tree-source-code">{{ source['insert_left'] }}</code></pre>
+        </div>
+    </section>
+</section>
+<script id="tree-initial-data" type="application/json">{{ initial_tree|tojson }}</script>
+<script id="tree-source-data" type="application/json">{{ source|tojson }}</script>
+{% endblock %}
+{% block page_scripts %}<script src="{{ url_for('static', filename='js/tree.js') }}" defer></script>{% endblock %}

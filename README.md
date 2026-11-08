@@ -10,12 +10,14 @@ A Flask-based portfolio that presents data-structure and algorithm visualization
 - **Decimal to Other Number System** — convert a non-negative decimal integer to binary, octal, or hexadecimal.
 - **Reverse a String** — reverse text using stack operations.
 - **Sorting Algorithms** — visualize Bubble, Insertion, Selection, Quick, and Merge sort.
+- **Binary Tree Visualizer** — insert, traverse, search, and delete nodes in a binary tree.
 
 The Infix to Postfix, Decimal Conversion, and Reverse a String tools support **Next Step**, **Auto Play**, and **Show Result** to explore or complete their recorded steps. The Stack Visualizer presents individual stack operations and their effects.
 
 ## Credits
 
 The sorting algorithms visualizer is adapted from [stian96/algorithm-visualizer](https://github.com/stian96/algorithm-visualizer), distributed under the MIT License. The license text is included in `licenses/stian96-algorithm-visualizer-LICENSE.txt`.
+Binary tree methods follow the course lecture (Trees and Graphs, G. Avena).
 
 ## Run locally
 
